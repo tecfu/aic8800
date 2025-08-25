@@ -17,10 +17,6 @@ export CONFIG_PLATFORM_AMLOGIC = n
 export CONFIG_PLATFORM_HI = n
 export CONFIG_PLATFORM_UBUNTU = y
 
-# Add a global include path so all sub-modules (like aic_load_fw)
-# can find the shared compatibility header in aic8800_fdrv.
-ccflags-y += -I$(src)/aic8800_fdrv
-
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP), y)
 ARCH = arm64
 KDIR = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/kernel

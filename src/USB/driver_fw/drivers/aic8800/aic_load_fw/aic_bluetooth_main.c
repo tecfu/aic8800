@@ -1,4 +1,3 @@
-#include "rwnx_compat.h"
 #include <linux/module.h>
 #include <linux/inetdevice.h>
 #include <linux/version.h>
@@ -8,6 +7,10 @@
 #include "aicwf_rx_prealloc.h"
 #include "aicwf_debug.h"
 #include "aicwf_txq_prealloc.h"
+
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 4, 0)
+#define MODULE_IMPORT_NS(ns)
+#endif
 
 
 #define DRV_CONFIG_FW_NAME             "fw.bin"
@@ -70,9 +73,7 @@ static void __exit aic_bluetooth_mod_exit(void)
 module_init(aic_bluetooth_mod_init);
 module_exit(aic_bluetooth_mod_exit);
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
-MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
-#endif
+
 
 MODULE_FIRMWARE(DRV_CONFIG_FW_NAME);
 MODULE_DESCRIPTION(DRV_DESCRIPTION);
