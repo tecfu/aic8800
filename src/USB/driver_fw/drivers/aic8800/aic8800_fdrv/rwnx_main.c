@@ -5875,6 +5875,46 @@ static int rwnx_cfg80211_leave_mesh(struct wiphy *wiphy, struct net_device *dev)
     return 0;
 }
 
+/*
+ * ===================================================================
+ * KERNEL 5.4+ COMPATIBILITY WRAPPERS
+ *
+ * These wrappers are created to match the function signatures required
+ * by newer kernels for the cfg80211_ops struct. They act as a bridge,
+ * calling the driver's original functions with the expected arguments.
+ * ===================================================================
+ */
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
+
+/*
+ * Wrapper for .set_monitor_channel. The new kernel API adds a
+ * 'netdev' argument which the original driver function does not use.
+ * This wrapper accepts the new signature and calls the old function.
+ */
+static int rwnx_cfg80211_set_monitor_channel_new(struct wiphy *wiphy,
+                                                struct net_device *netdev,
+                                                struct cfg80211_chan_def *chandef)
+{
+    /* Call the original function, ignoring the new 'netdev' parameter */
+    return rwnx_cfg80211_set_monitor_channel(wiphy, chandef);
+}
+
+/*
+ * Wrapper for .start_radar_detection. The new kernel API adds an
+ * integer argument at the end which the original function does not use.
+ * This wrapper accepts the new signature and calls the old function.
+ */
+static int rwnx_cfg80211_start_radar_detection_new(struct wiphy *wiphy,
+                                                  struct net_device *netdev,
+                                                  struct cfg80211_chan_def *chandef,
+                                                  u32 cac_time_ms,
+                                                  int VHT_CAC_TIME_DROP_UNSUPPORTED)
+{
+    /* Call the original function, ignoring the new final integer parameter */
+    return rwnx_cfg80211_start_radar_detection(wiphy, netdev, chandef, cac_time_ms);
+}
+#endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0) */
+
 static struct cfg80211_ops rwnx_cfg80211_ops = {
     .add_virtual_intf = rwnx_cfg80211_add_iface,
     .del_virtual_intf = rwnx_cfg80211_del_iface,
@@ -5896,7 +5936,11 @@ static struct cfg80211_ops rwnx_cfg80211_ops = {
     .start_ap = rwnx_cfg80211_start_ap,
     .change_beacon = rwnx_cfg80211_change_beacon,
     .stop_ap = rwnx_cfg80211_stop_ap,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
+    .set_monitor_channel = rwnx_cfg80211_set_monitor_channel_new,
+#else
     .set_monitor_channel = rwnx_cfg80211_set_monitor_channel,
+#endif
     .probe_client = rwnx_cfg80211_probe_client,
 //    .mgmt_frame_register = rwnx_cfg80211_mgmt_frame_register,
     .set_wiphy_params = rwnx_cfg80211_set_wiphy_params,
@@ -5909,7 +5953,11 @@ static struct cfg80211_ops rwnx_cfg80211_ops = {
     .cancel_remain_on_channel = rwnx_cfg80211_cancel_remain_on_channel,
     .dump_survey = rwnx_cfg80211_dump_survey,
     .get_channel = rwnx_cfg80211_get_channel,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
+    .start_radar_detection = rwnx_cfg80211_start_radar_detection_new,
+#else
     .start_radar_detection = rwnx_cfg80211_start_radar_detection,
+#endif
     .update_ft_ies = rwnx_cfg80211_update_ft_ies,
     .set_cqm_rssi_config = rwnx_cfg80211_set_cqm_rssi_config,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 16, 0)
@@ -5929,7 +5977,6 @@ static struct cfg80211_ops rwnx_cfg80211_ops = {
     .sched_scan_start = rwnx_cfg80211_sched_scan_start,
     .sched_scan_stop = rwnx_cfg80211_sched_scan_stop,
 #endif
-
 };
 
 

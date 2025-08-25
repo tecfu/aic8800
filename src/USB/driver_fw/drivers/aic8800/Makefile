@@ -17,6 +17,10 @@ export CONFIG_PLATFORM_AMLOGIC = n
 export CONFIG_PLATFORM_HI = n
 export CONFIG_PLATFORM_UBUNTU = y
 
+# Add a global include path so all sub-modules (like aic_load_fw)
+# can find the shared compatibility header in aic8800_fdrv.
+ccflags-y += -I$(src)/aic8800_fdrv
+
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP), y)
 ARCH = arm64
 KDIR = /home/yaya/E/Rockchip/3566/firefly/Android11.0/Firefly-RK356X_Android11.0_git_20210824/RK356X_Android11.0/kernel
@@ -27,7 +31,7 @@ endif
 ifeq ($(CONFIG_PLATFORM_ALLWINNER), y)
 KDIR  = /home/yaya/E/Allwinner/R818/R818/AndroidQ/lichee/kernel/linux-4.9
 ARCH = arm64
-CROSS_COMPILE = /home/yaya/E/Allwinner/R818/R818/AndroidQ/lichee/out/gcc-linaro-5.3.1-2016.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+CROSS_COMPILE = /home/yaya/E/Allwinner/R818/R818/AndroidQ/lichee/out/gcc-linaro-5.3.1-206.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 ccflags-y += -DANDROID_PLATFORM
 endif
 

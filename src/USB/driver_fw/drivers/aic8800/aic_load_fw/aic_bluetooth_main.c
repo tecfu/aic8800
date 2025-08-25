@@ -1,3 +1,4 @@
+#include "rwnx_compat.h"
 #include <linux/module.h>
 #include <linux/inetdevice.h>
 #include <linux/version.h>
